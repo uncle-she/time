@@ -18,13 +18,14 @@
             height: 100vh;
             margin: 0;
             background-color: black;
-            color: white;
+            color: rgb(200, 200, 200);
             font-family: Arial, sans-serif;
         }
 
         #time {
             font-size: 40vw;
             text-align: center;
+            font-weight: bold;
         }
 
         @media (min-width: 600px) {
@@ -44,6 +45,7 @@
 <body>
     <div id="time"></div>
 
+    <script src="./NoSleep.min.js"></script>
     <script>
         function updateTime() {
             const now = new Date();
@@ -53,6 +55,14 @@
         }
         setInterval(updateTime, 1000);
         updateTime(); // initial call to display time immediately
+
+        // 启用 NoSleep.js 防止设备睡眠
+        const noSleep = new NoSleep();
+
+        document.addEventListener('click', function enableNoSleep() {
+            noSleep.enable();
+            document.removeEventListener('click', enableNoSleep, false);
+        }, false);
     </script>
 </body>
 
