@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable"
+          content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent">
+    <title>实时时间显示</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        #time {
+            font-size: 40vw;
+            text-align: center;
+        }
+
+        @media (min-width: 600px) {
+            #time {
+                font-size: 30vw;
+            }
+        }
+
+        @media (min-width: 900px) {
+            #time {
+                font-size: 20vw;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="time"></div>
+
+    <script>
+        function updateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('time').textContent = `${hours}:${minutes}`;
+        }
+        setInterval(updateTime, 1000);
+        updateTime(); // initial call to display time immediately
+    </script>
+</body>
+
+</html>
