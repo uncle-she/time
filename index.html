@@ -15,6 +15,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
             height: 100vh;
             margin: 0;
             background-color: black;
@@ -22,28 +23,62 @@
             font-family: Arial, sans-serif;
         }
 
+        #time-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
         #time {
             font-size: 40vw;
             text-align: center;
             font-weight: bold;
+            display: block;
+            margin-bottom: -6vw;
         }
+
+        #footer {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: row;
+            width: 50%;
+            font-size: 4vw;
+        }
+
 
         @media (min-width: 600px) {
             #time {
                 font-size: 30vw;
+                margin-bottom: -4vw;
+            }
+
+            #footer {
+                font-size: 4vw;
             }
         }
 
         @media (min-width: 900px) {
             #time {
                 font-size: 20vw;
+                margin-bottom: -3vw;
+            }
+
+            #footer {
+                font-size: 3vw;
             }
         }
     </style>
 </head>
 
 <body>
-    <div id="time"></div>
+    <div id="time-container">
+        <div id="time"></div>
+        <div id="footer">
+            <div id="date"></div>
+            <div id="days-of-week"></div>
+        </div>
+    </div>
 
     <script src="./NoSleep.min.js"></script>
     <script>
@@ -51,7 +86,17 @@
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
+
+            const dayIndex = now.getDay();
+            const daysOfWeekArray = ['星期 7', '星期 1', '星期 2', '星期 3', '星期 4', '星期 5', '星期 6'];
+            const daysOfWeek = daysOfWeekArray[dayIndex];
+
+            const month = now.getMonth() + 1;
+            const date = now.getDate();
+
             document.getElementById('time').textContent = `${hours}:${minutes}`;
+            document.getElementById('date').textContent = `${month} 月 ${date} 日`;
+            document.getElementById('days-of-week').textContent = `${daysOfWeek}`;
         }
         setInterval(updateTime, 1000);
         updateTime(); // initial call to display time immediately
