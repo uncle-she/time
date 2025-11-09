@@ -47,6 +47,13 @@
             font-weight: bold;
         }
 
+        #days-of-week-english {
+            position: absolute;
+            display: flex;
+            font-size: 2vw;
+            margin-top: -0.8vw;
+        }
+
 
         @media (min-width: 600px) {
             #time {
@@ -57,6 +64,10 @@
             #footer {
                 width: 58%;
                 font-size: 5vw;
+            }
+
+            #days-of-week-english {
+                font-size: 2.5vw;
             }
         }
 
@@ -69,6 +80,10 @@
             #footer {
                 font-size: 3.2vw;
             }
+
+            #days-of-week-english {
+                font-size: 1.6vw;
+            }
         }
     </style>
 </head>
@@ -78,7 +93,10 @@
         <div id="time"></div>
         <div id="footer">
             <div id="date"></div>
-            <div id="days-of-week"></div>
+            <div id="days-of-week">
+                <div id="days-of-week-english"></div>
+                <div id="days-of-week-chinese"></div>
+            </div>
         </div>
     </div>
 
@@ -93,12 +111,16 @@
             const daysOfWeekArray = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
             const daysOfWeek = daysOfWeekArray[dayIndex];
 
+            const daysOfWeekEnglishArray = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const daysOfWeekEnglish = daysOfWeekEnglishArray[dayIndex];
+
             const month = now.getMonth() + 1;
             const date = now.getDate();
 
             document.getElementById('time').textContent = `${hours}:${minutes}`;
             document.getElementById('date').textContent = `${month} 月 ${date} 日`;
-            document.getElementById('days-of-week').textContent = `${daysOfWeek}`;
+            document.getElementById('days-of-week-chinese').textContent = `${daysOfWeek}`;
+            document.getElementById('days-of-week-english').textContent = `${daysOfWeekEnglish}`;
         }
         setInterval(updateTime, 1000);
         updateTime(); // initial call to display time immediately
