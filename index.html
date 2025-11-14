@@ -53,7 +53,13 @@
             font-size: 2vw;
             margin-top: -0.8vw;
         }
-
+        
+        #months-of-year-english {
+            position: absolute;
+            display: flex;
+            font-size: 2vw;
+            margin-top: -0.8vw;
+        }
 
         @media (min-width: 600px) {
             #time {
@@ -67,6 +73,10 @@
             }
 
             #days-of-week-english {
+                font-size: 2.5vw;
+            }
+            
+            #months-of-year-english {
                 font-size: 2.5vw;
             }
         }
@@ -84,6 +94,10 @@
             #days-of-week-english {
                 font-size: 1.6vw;
             }
+            
+            #months-of-year-english {
+                font-size: 1.6vw;
+            }
         }
     </style>
 </head>
@@ -93,6 +107,7 @@
         <div id="time"></div>
         <div id="footer">
             <div id="date">
+                <div id="months-of-year-english"></div>
                 <span id="month-text"></span>
                 <span id="date-number"></span>
                 <span id="day-text"></span>
@@ -117,6 +132,10 @@
 
             const daysOfWeekEnglishArray = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             const daysOfWeekEnglish = daysOfWeekEnglishArray[dayIndex];
+            
+            const monthsOfYearEnglishArray = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const monthIndex = now.getMonth();
+            const monthsOfYearEnglish = monthsOfYearEnglishArray[monthIndex];
 
             const month = now.getMonth() + 1;
             const date = now.getDate();
@@ -125,6 +144,7 @@
             document.getElementById('month-text').textContent = `${month} 月 `;
             document.getElementById('date-number').textContent = `${date}`;
             document.getElementById('day-text').textContent = ` 日`;
+            document.getElementById('months-of-year-english').textContent = `${monthsOfYearEnglish}`;
             
             // 获取日期数字元素
             const dateNumberElement = document.getElementById('date-number');
