@@ -121,9 +121,36 @@
             document.getElementById('date').textContent = `${month} 月 ${date} 日`;
             document.getElementById('days-of-week-chinese').textContent = `${daysOfWeek}`;
             document.getElementById('days-of-week-english').textContent = `${daysOfWeekEnglish}`;
+            
+            // 获取日期元素
+            const dateElement = document.getElementById('date');
+            
+            // 设置中午12点到24点之间日期文字为红色（除非已被点击）
+            if (hours >= 12 && hours <= 23) {
+                if (!dateElement.classList.contains('clicked')) {
+                    dateElement.style.color = 'red';
+                }
+            } else {
+                // 午夜后重置颜色和点击状态
+                dateElement.style.color = 'rgb(200, 200, 200)';
+                dateElement.classList.remove('clicked');
+            }
         }
         setInterval(updateTime, 1000);
         updateTime(); // initial call to display time immediately
+
+        // 添加点击事件监听器 - 点击后恢复正常颜色并标记为已点击
+        document.getElementById('date').addEventListener('click', function() {
+            this.style.color = 'rgb(200, 200, 200)';
+            this.classList.add('clicked');
+        });
+        
+        // 添加点击星期几区域的事件监听器
+        document.getElementById('days-of-week').addEventListener('click', function() {
+            const dateElement = document.getElementById('date');
+            dateElement.style.color = 'rgb(200, 200, 200)';
+            dateElement.classList.add('clicked');
+        });
 
         // 启用 NoSleep.js 防止设备睡眠
         const noSleep = new NoSleep();
