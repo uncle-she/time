@@ -49,7 +49,7 @@ class TimeDisplayApp {
         
         updateTimeDisplay(hours, minutes)
         updateDateDisplay(month, date, daysOfWeek, daysOfWeekEnglish, monthsOfYearEnglish)
-        handleDateColor(hours)
+        handleDateColor(hours.toInt())
     }
     
     private fun updateTimeDisplay(hours: String, minutes: String) {
