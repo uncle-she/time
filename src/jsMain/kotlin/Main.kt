@@ -10,6 +10,14 @@ import kotlin.js.Date
  */
 class TimeDisplayApp {
     private var noSleepEnabled = false
+    companion object {
+        val DAYS_OF_WEEK_ARRAY = arrayOf("星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六")
+        val DAYS_OF_WEEK_ENGLISH_ARRAY = arrayOf("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
+        val MONTHS_OF_YEAR_ENGLISH_ARRAY = arrayOf(
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        )
+    }
     
     fun start() {
         // 更新时间
@@ -24,25 +32,20 @@ class TimeDisplayApp {
         // 启用 NoSleep
         enableNoSleep()
     }
-    
     private fun updateTime() {
         val now = Date()
         val hours = now.getHours().toString().padStart(2, '0')
         val minutes = now.getMinutes().toString().padStart(2, '0')
         
         val dayIndex = now.getDay()
-        val daysOfWeekArray = arrayOf("星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六")
-        val daysOfWeek = daysOfWeekArray[dayIndex]
+
+        val daysOfWeek = DAYS_OF_WEEK_ARRAY[dayIndex]
         
-        val daysOfWeekEnglishArray = arrayOf("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
-        val daysOfWeekEnglish = daysOfWeekEnglishArray[dayIndex]
+        val daysOfWeekEnglish = DAYS_OF_WEEK_ENGLISH_ARRAY[dayIndex]
         
-        val monthsOfYearEnglishArray = arrayOf(
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        )
+
         val monthIndex = now.getMonth()
-        val monthsOfYearEnglish = monthsOfYearEnglishArray[monthIndex]
+        val monthsOfYearEnglish = MONTHS_OF_YEAR_ENGLISH_ARRAY[monthIndex]
         
         val month = now.getMonth() + 1
         val date = now.getDate()
