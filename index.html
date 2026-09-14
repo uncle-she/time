@@ -24,6 +24,7 @@
         }
 
         #time-container {
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -49,8 +50,8 @@
 
         #temperature {
             position: absolute;
-            top: 2vw;
-            left: 2vw;
+            top: 0;
+            left: 1.5vw;
             font-size: 3vw;
             font-weight: bold;
         }
@@ -119,8 +120,8 @@
 </head>
 
 <body>
-    <div id="temperature"></div>
     <div id="time-container">
+        <div id="temperature"></div>
         <div id="time"></div>
         <div id="footer">
             <div id="date">
