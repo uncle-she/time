@@ -48,12 +48,20 @@
             font-weight: bold;
         }
 
-        #temperature {
+        #temperature,
+        #weather {
             position: absolute;
             top: 0;
-            left: 1.5vw;
-            font-size: 3vw;
+            font-size: 3.6vw;
             font-weight: bold;
+        }
+
+        #temperature {
+            left: 1.5vw;
+        }
+
+        #weather {
+            right: 1.5vw;
         }
 
         #days-of-week-english {
@@ -81,8 +89,9 @@
                 font-size: 5vw;
             }
 
-            #temperature {
-                font-size: 2.5vw;
+            #temperature,
+            #weather {
+                font-size: 3vw;
             }
 
             #days-of-week-english {
@@ -104,8 +113,9 @@
                 font-size: 3.2vw;
             }
 
-            #temperature {
-                font-size: 1.8vw;
+            #temperature,
+            #weather {
+                font-size: 2.2vw;
             }
 
             #days-of-week-english {
@@ -122,6 +132,7 @@
 <body>
     <div id="time-container">
         <div id="temperature"></div>
+        <div id="weather"></div>
         <div id="time"></div>
         <div id="footer">
             <div id="date">
@@ -223,9 +234,41 @@
             dateNumberElement.classList.add('clicked');
         });
 
-        // 气温显示：从 Prometheus 格式的 metrics 接口读取当前气温
-        const TEMPERATURE_URL = 'https://gateway.uncle.im:6442/openmeteo/metrics';
-        const TEMPERATURE_REFRESH_MS = 15 * 60 * 1000; // 接口上报间隔为 900 秒
+        // 气温与天气显示：从 Prometheus 格式的 metrics 接口读取
+        const METRICS_URL = 'https://gateway.uncle.im:6442/openmeteo/metrics';
+        const METRICS_REFRESH_MS = 15 * 60 * 1000; // 接口上报间隔为 900 秒
+
+        // WMO 天气代码对应中文（Open-Meteo weather_code）
+        const WEATHER_CODE_ZH = {
+            0: '晴',
+            1: '晴间多云',
+            2: '多云',
+            3: '阴',
+            45: '雾',
+            48: '冻雾',
+            51: '小毛毛雨',
+            53: '毛毛雨',
+            55: '密毛毛雨',
+            56: '冻毛毛雨',
+            57: '强冻毛毛雨',
+            61: '小雨',
+            63: '中雨',
+            65: '大雨',
+            66: '冻雨',
+            67: '强冻雨',
+            71: '小雪',
+            73: '中雪',
+            75: '大雪',
+            77: '米雪',
+            80: '小阵雨',
+            81: '阵雨',
+            82: '强阵雨',
+            85: '小阵雪',
+            86: '大阵雪',
+            95: '雷阵雨',
+            96: '雷阵雨伴小冰雹',
+            99: '雷阵雨伴大冰雹'
+        };
 
         // 从 Prometheus 文本中解析指定指标的数值
         function parseMetricValue(text, metricName) {
@@ -234,26 +277,34 @@
             return match ? parseFloat(match[1]) : null;
         }
 
-        async function updateTemperature() {
+        async function updateWeather() {
             try {
-                const response = await fetch(TEMPERATURE_URL, { cache: 'no-store' });
+                const response = await fetch(METRICS_URL, { cache: 'no-store' });
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}`);
                 }
                 const text = await response.text();
+
                 const temperature = parseMetricValue(text, 'openmeteo_temperature');
-                if (temperature === null || Number.isNaN(temperature)) {
-                    throw new Error('未找到 openmeteo_temperature 指标');
+                if (temperature !== null && !Number.isNaN(temperature)) {
+                    document.getElementById('temperature').textContent = `${temperature.toFixed(1)}°C`;
                 }
-                document.getElementById('temperature').textContent = `${temperature.toFixed(1)}°C`;
+
+                const weatherCode = parseMetricValue(text, 'openmeteo_weather_code');
+                const weatherZh = WEATHER_CODE_ZH[weatherCode];
+                if (weatherZh) {
+                    document.getElementById('weather').textContent = weatherZh;
+                } else {
+                    console.warn('未知的天气代码：', weatherCode);
+                }
             } catch (error) {
                 // 获取失败时保留上一次的数值，不显示错误信息
-                console.warn('获取气温失败：', error);
+                console.warn('获取气象数据失败：', error);
             }
         }
 
-        updateTemperature();
-        setInterval(updateTemperature, TEMPERATURE_REFRESH_MS);
+        updateWeather();
+        setInterval(updateWeather, METRICS_REFRESH_MS);
 
         // 启用 NoSleep.js 防止设备睡眠
         const noSleep = new NoSleep();
