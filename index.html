@@ -47,6 +47,14 @@
             font-weight: bold;
         }
 
+        #temperature {
+            position: absolute;
+            top: 2vw;
+            left: 2vw;
+            font-size: 3vw;
+            font-weight: bold;
+        }
+
         #days-of-week-english {
             position: absolute;
             display: flex;
@@ -72,6 +80,10 @@
                 font-size: 5vw;
             }
 
+            #temperature {
+                font-size: 2.5vw;
+            }
+
             #days-of-week-english {
                 font-size: 2.5vw;
             }
@@ -91,6 +103,10 @@
                 font-size: 3.2vw;
             }
 
+            #temperature {
+                font-size: 1.8vw;
+            }
+
             #days-of-week-english {
                 font-size: 1.6vw;
             }
@@ -103,6 +119,7 @@
 </head>
 
 <body>
+    <div id="temperature"></div>
     <div id="time-container">
         <div id="time"></div>
         <div id="footer">
@@ -204,6 +221,38 @@
             // 标记为已点击
             dateNumberElement.classList.add('clicked');
         });
+
+        // 气温显示：从 Prometheus 格式的 metrics 接口读取当前气温
+        const TEMPERATURE_URL = 'https://gateway.uncle.im:6442/openmeteo/metrics';
+        const TEMPERATURE_REFRESH_MS = 15 * 60 * 1000; // 接口上报间隔为 900 秒
+
+        // 从 Prometheus 文本中解析指定指标的数值
+        function parseMetricValue(text, metricName) {
+            const pattern = new RegExp('^' + metricName + '\\{[^}]*\\}\\s+([-+0-9.eE]+)\\s*$', 'm');
+            const match = text.match(pattern);
+            return match ? parseFloat(match[1]) : null;
+        }
+
+        async function updateTemperature() {
+            try {
+                const response = await fetch(TEMPERATURE_URL, { cache: 'no-store' });
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                const text = await response.text();
+                const temperature = parseMetricValue(text, 'openmeteo_temperature');
+                if (temperature === null || Number.isNaN(temperature)) {
+                    throw new Error('未找到 openmeteo_temperature 指标');
+                }
+                document.getElementById('temperature').textContent = `${temperature.toFixed(1)}°C`;
+            } catch (error) {
+                // 获取失败时保留上一次的数值，不显示错误信息
+                console.warn('获取气温失败：', error);
+            }
+        }
+
+        updateTemperature();
+        setInterval(updateTemperature, TEMPERATURE_REFRESH_MS);
 
         // 启用 NoSleep.js 防止设备睡眠
         const noSleep = new NoSleep();
