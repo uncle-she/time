@@ -277,6 +277,45 @@
             return match ? parseFloat(match[1]) : null;
         }
 
+        const weatherElement = document.getElementById('weather');
+        let lastWeatherZh = '';
+        let lastObservationTime = null; // openmeteo_time，Unix 秒
+        let showObservationTime = false; // 点击天气后切换为显示观测时间
+
+        // 将 Unix 秒格式化为北京时间（UTC+8），只保留到分钟，不显示年份
+        function formatBeijingTime(unixSeconds) {
+            const parts = new Intl.DateTimeFormat('en-CA', {
+                timeZone: 'Asia/Shanghai',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hourCycle: 'h23'
+            }).formatToParts(new Date(unixSeconds * 1000));
+            const values = {};
+            parts.forEach(function (part) {
+                values[part.type] = part.value;
+            });
+            return `${values.month}-${values.day} ${values.hour}:${values.minute}`;
+        }
+
+        function renderWeather() {
+            if (showObservationTime && lastObservationTime !== null) {
+                weatherElement.textContent = formatBeijingTime(lastObservationTime);
+            } else {
+                weatherElement.textContent = lastWeatherZh;
+            }
+        }
+
+        // 点击天气区域：在天气和观测时间之间切换
+        weatherElement.addEventListener('click', function () {
+            if (lastObservationTime === null) {
+                return;
+            }
+            showObservationTime = !showObservationTime;
+            renderWeather();
+        });
+
         async function updateWeather() {
             try {
                 const response = await fetch(METRICS_URL, { cache: 'no-store' });
@@ -293,10 +332,17 @@
                 const weatherCode = parseMetricValue(text, 'openmeteo_weather_code');
                 const weatherZh = WEATHER_CODE_ZH[weatherCode];
                 if (weatherZh) {
-                    document.getElementById('weather').textContent = weatherZh;
+                    lastWeatherZh = weatherZh;
                 } else {
                     console.warn('未知的天气代码：', weatherCode);
                 }
+
+                const observationTime = parseMetricValue(text, 'openmeteo_time');
+                if (observationTime !== null && !Number.isNaN(observationTime)) {
+                    lastObservationTime = observationTime;
+                }
+
+                renderWeather();
             } catch (error) {
                 // 获取失败时保留上一次的数值，不显示错误信息
                 console.warn('获取气象数据失败：', error);
