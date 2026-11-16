@@ -283,20 +283,15 @@
         let showObservationTime = false; // 点击天气后切换为显示观测时间
 
         // 将 Unix 秒格式化为北京时间（UTC+8），只保留到分钟，不显示年份
+        // 不使用 Intl.DateTimeFormat：部分老款安卓 WebView 不支持 formatToParts，
+        // 或缺少 Asia/Shanghai 时区数据，会在点击时抛异常导致毫无反应
         function formatBeijingTime(unixSeconds) {
-            const parts = new Intl.DateTimeFormat('en-CA', {
-                timeZone: 'Asia/Shanghai',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                hourCycle: 'h23'
-            }).formatToParts(new Date(unixSeconds * 1000));
-            const values = {};
-            parts.forEach(function (part) {
-                values[part.type] = part.value;
-            });
-            return `${values.month}-${values.day} ${values.hour}:${values.minute}`;
+            const beijing = new Date((unixSeconds + 8 * 60 * 60) * 1000);
+            function pad(n) {
+                return n < 10 ? '0' + n : String(n);
+            }
+            return pad(beijing.getUTCMonth() + 1) + '-' + pad(beijing.getUTCDate()) +
+                ' ' + pad(beijing.getUTCHours()) + ':' + pad(beijing.getUTCMinutes());
         }
 
         function renderWeather() {
