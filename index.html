@@ -338,17 +338,17 @@
 
                 const temperature = parseMetricValue(text, 'openmeteo_temperature');
                 if (temperature !== null && !Number.isNaN(temperature)) {
-                    document.getElementById('temperature-current').textContent = `${temperature.toFixed(1)}°C`;
+                    document.getElementById('temperature-current').textContent = `${temperature.toFixed(0)}°C`;
                 }
 
                 const temperatureMin = parseMetricValue(text, 'openmeteo_temperature_min');
                 if (temperatureMin !== null && !Number.isNaN(temperatureMin)) {
-                    document.getElementById('temperature-min').textContent = `${temperatureMin.toFixed(1)}°`;
+                    document.getElementById('temperature-min').textContent = `${temperatureMin.toFixed(0)}°`;
                 }
 
                 const temperatureMax = parseMetricValue(text, 'openmeteo_temperature_max');
                 if (temperatureMax !== null && !Number.isNaN(temperatureMax)) {
-                    document.getElementById('temperature-max').textContent = `${temperatureMax.toFixed(1)}°`;
+                    document.getElementById('temperature-max').textContent = `${temperatureMax.toFixed(0)}°`;
                 }
 
                 const weatherCode = parseMetricValue(text, 'openmeteo_weather_code');
