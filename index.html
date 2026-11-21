@@ -49,7 +49,7 @@
         }
 
         #temperature,
-        #weather {
+        #weather-block {
             position: absolute;
             top: 0;
             font-size: 4vw;
@@ -67,8 +67,42 @@
             margin: 0 0.8vw;
         }
 
-        #weather {
+        /* 天气行：左侧为当日降雨概率，右侧为天气文字，整体高度与天气文字行高一致 */
+        #weather-block {
             right: 4vw;
+            display: flex;
+            align-items: center;
+            gap: 1.2vw;
+            height: 1.15em;
+        }
+
+        #weather {
+            line-height: 1.15;
+            white-space: nowrap;
+        }
+
+        /* 降雨概率：降雨云图标在上，百分比在下，压缩在天气文字的行高内 */
+        #precipitation {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            line-height: 1;
+            color: #5bc0eb;
+        }
+
+        #precipitation-icon {
+            display: block;
+            height: 0.6em;
+            width: auto;
+        }
+
+        #precipitation-probability {
+            font-size: 0.5em;
+            line-height: 1;
+            margin-top: 0.03em;
+            white-space: nowrap;
         }
 
         #days-of-week-english {
@@ -97,7 +131,7 @@
             }
 
             #temperature,
-            #weather {
+            #weather-block {
                 font-size: 5vw;
             }
 
@@ -126,7 +160,7 @@
             }
 
             #temperature,
-            #weather {
+            #weather-block {
                 font-size: 3.2vw;
             }
 
@@ -149,7 +183,24 @@
 <body>
     <div id="time-container">
         <div id="temperature"><span id="temperature-min"></span><span id="temperature-current"></span><span id="temperature-max"></span></div>
-        <div id="weather"></div>
+        <div id="weather-block">
+            <div id="precipitation" style="display: none;" title="当日降雨概率">
+                <svg id="precipitation-icon" viewBox="4 4.2 15.5 16.4" aria-hidden="true">
+                    <g fill="#eeeeee">
+                        <circle cx="9.2" cy="9" r="4.3"/>
+                        <circle cx="15.6" cy="10.4" r="3.2"/>
+                        <rect x="5.2" y="9.8" width="13.4" height="3.8" rx="1.9"/>
+                    </g>
+                    <g stroke="#5bc0eb" stroke-width="1.7" stroke-linecap="round">
+                        <path d="M8.5 16.5 7.3 20"/>
+                        <path d="M12.3 16.5 11.1 20"/>
+                        <path d="M16.1 16.5 14.9 20"/>
+                    </g>
+                </svg>
+                <span id="precipitation-probability"></span>
+            </div>
+            <div id="weather"></div>
+        </div>
         <div id="time"></div>
         <div id="footer">
             <div id="date">
@@ -295,6 +346,7 @@
         }
 
         const weatherElement = document.getElementById('weather');
+        const precipitationElement = document.getElementById('precipitation');
         let lastWeatherZh = '';
         let lastObservationTime = null; // openmeteo_time，Unix 秒
         let showObservationTime = false; // 点击天气后切换为显示观测时间
@@ -357,6 +409,12 @@
                     lastWeatherZh = weatherZh;
                 } else {
                     console.warn('未知的天气代码：', weatherCode);
+                }
+
+                const precipitationProbabilityMax = parseMetricValue(text, 'openmeteo_precipitation_probability_max');
+                if (precipitationProbabilityMax !== null && !Number.isNaN(precipitationProbabilityMax)) {
+                    document.getElementById('precipitation-probability').textContent = `${precipitationProbabilityMax.toFixed(0)}%`;
+                    precipitationElement.style.display = 'flex';
                 }
 
                 const observationTime = parseMetricValue(text, 'openmeteo_time');
